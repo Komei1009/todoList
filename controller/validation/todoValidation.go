@@ -3,6 +3,7 @@ package validation
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"fmt"
 )
 
 // タスク情報
@@ -14,6 +15,7 @@ type Todo struct {
 // タスクのnullチェック
 func TodoInputCheck(c *gin.Context)(string, bool) {
 	todo := c.PostForm("task")
+	fmt.Println(todo)
 	if todo == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"err": "タスクが入力されていません。",
