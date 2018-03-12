@@ -1,0 +1,4 @@
+dbconfig.yml
+.vscode/
+model/secretKey.go
+main

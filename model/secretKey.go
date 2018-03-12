@@ -1,0 +1,3 @@
+package model
+
+var secret = "0q4rfjoajfoapurejfanvohjvaovjnahgoiaptu89eneou9048iu0wjfowu409jaojvaogop4utjgaoja"

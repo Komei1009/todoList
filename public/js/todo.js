@@ -22,6 +22,9 @@ function addTodo(){
         type:'POST',
         dataType: 'json',
         data : data,
+        headers: {
+            'Authorization': localStorage.getItem('token')
+        },
         timeout:10000,
     }).done(function (result) {
         console.log(result.ok)
@@ -64,6 +67,9 @@ function controllStatus(task_name,controll){
         type:'POST',
         dataType: 'json',
         data : data,
+        headers: {
+            'Authorization': localStorage.getItem('token')
+        },
         timeout:10000,
     }).done(function (result) {
         console.log(result.ok)
@@ -81,6 +87,9 @@ function display(select){
         type:'POST',
         dataType: 'json',
         data : data,
+        headers: {
+            'Authorization': localStorage.getItem('token')
+        },
         timeout:10000,
     }).done(function(data){
         for (var i = 0; i < data['todos'].length; i++){

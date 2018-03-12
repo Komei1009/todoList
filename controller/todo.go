@@ -9,6 +9,13 @@ import (
 
 // タスク新規追加
 func TodoAdd(c *gin.Context){
+	userName, ok := model.AuthorityCheck(c)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"err": "不正アクセスです。",
+		})
+		return
+	}
 	// リクエストパラメータ取得
 	todo, ok := validation.TodoInputCheck(c)
 	if !ok{
@@ -16,14 +23,14 @@ func TodoAdd(c *gin.Context){
 	}
 
 	// タスク名の重複防止
-	if model.ExistTaskName(todo) {
+	if model.ExistTaskName(userName,todo) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"err": "登録済みのタスクです。",
 		})
 		return
 	}
 	// DBにタスク追加
-	err := model.NewTodo(todo)
+	err := model.NewTodo(userName, todo)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"err": "データベースエラー",
@@ -38,6 +45,13 @@ func TodoAdd(c *gin.Context){
 
 // タスク完了or削除チェック
 func TodoControll(c *gin.Context){
+	user, ok := model.AuthorityCheck(c)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"err": "不正アクセスです。",
+		})
+		return
+	}
 	// リクエストパラメータ取得
 	controll, ok := validation.TodoControllCheck(c)
 	if !ok {
@@ -45,7 +59,7 @@ func TodoControll(c *gin.Context){
 	}
 
 	// タスクがない時"”
-	if !model.ExistTaskName(controll.TaskName) {
+	if !model.ExistTaskName(user, controll.TaskName) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"err": "タスクが見つかりませんでした",
 		})
@@ -54,12 +68,12 @@ func TodoControll(c *gin.Context){
 
 	// タスク完了or削除の処理
 	if controll.Status == "change" {
-		model.CompletedTodo(controll.TaskName)
+		model.CompletedTodo(user, controll.TaskName)
 		c.JSON(http.StatusOK, gin.H{
 			"ok": "タスクの状態を変更しました。",
 		})
 	} else {
-		model.RemoveTodo(controll.TaskName)
+		model.RemoveTodo(user, controll.TaskName)
 		c.JSON(http.StatusOK, gin.H{
 			"ok": "タスクを削除しました。",
 		})
@@ -69,6 +83,13 @@ func TodoControll(c *gin.Context){
 
 // 表示するTodo
 func TodoDisplay(c *gin.Context){
+	user, ok := model.AuthorityCheck(c)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"err": "不正アクセスです。",
+		})
+		return
+	}
 	// リクエストパラメータ取得
 	mode, ok := validation.TodoDisplayCheck(c)
 	if !ok{
@@ -77,6 +98,6 @@ func TodoDisplay(c *gin.Context){
 
 	// タスク表示
 	c.JSON(http.StatusOK, gin.H{
-		"todos" : model.DisplayTodo(mode),
+		"todos" : model.DisplayTodo(user, mode),
 	})
 }

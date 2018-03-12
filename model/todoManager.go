@@ -7,14 +7,16 @@ import (
 // タスク情報
 type Todo struct {
 	gorm.Model
+	User		string	`json:"user"`
 	TaskName 	string	`json:"task_name"`
 	Status		string	`json:"status"`
 }
 
 
 // 新規タスク登録
-func NewTodo (todo string)error{
+func NewTodo (user string, todo string)error{
 	task := Todo {
+		User	 : user,
 		TaskName : todo,
 		Status: "active",
 	}
@@ -22,16 +24,16 @@ func NewTodo (todo string)error{
 }
 
 // タスク名検索
-func ExistTaskName(todo string) bool {
+func ExistTaskName(user string, todo string) bool {
 	todos := []Todo{}
-	DB.Find(&todos, "task_name = ?", todo)
+	DB.Find(&todos, "user = ? and task_name = ?", user,todo)
 
 	return(len(todos) != 0)
 }
 // タスク完了
-func CompletedTodo(todo string)error{
+func CompletedTodo(user string, todo string)error{
 	task := Todo{}
-	err := DB.Where("task_name = ?",todo ).First(&task).Error
+	err := DB.Where("user = ? and task_name = ?",user, todo ).First(&task).Error
 	if err != nil {
 		panic(err)
 		return err
@@ -46,23 +48,23 @@ func CompletedTodo(todo string)error{
 }
 
 // タスク削除
-func RemoveTodo(todo string) bool {
+func RemoveTodo(user string, todo string) bool {
 	task := Todo{}
 
-	DB.Where("task_name = ?", todo).First(&task)
+	DB.Where("user = ? and task_name = ?",user, todo).First(&task)
 	DB.Delete(&task)
 	return true
 }
 
 // タスク表示
-func DisplayTodo(mode string) []Todo {
-	var allTodo []Todo
+func DisplayTodo(user string, mode string) []Todo {
+	var displayTodo []Todo
 
 	// 全てのタスク
 	if mode == "all" {
-		DB.Find(&allTodo)
+		DB.Where("user = ?",user).Find(&displayTodo)
 	} else {
-		DB.Where("status = ?",mode).Find(&allTodo)
+		DB.Where("user = ? and status = ?",user, mode).Find(&displayTodo)
 	}
-	return allTodo
+	return displayTodo
 }

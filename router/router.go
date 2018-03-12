@@ -12,12 +12,15 @@ func Getrouter() *gin.Engine {
 	r.Static("/css", "./public/css")
 	r.Static("/fonts", "./public/fonts")
 
-	r.LoadHTMLFiles("view/index.html")
+	r.LoadHTMLGlob("view/*")
 
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", nil)
 	})
 
+	r.GET("/todos", func(c *gin.Context){
+		c.HTML(http.StatusOK,"todo.html",nil)
+	})
 
 	api := r.Group("")
 	apiRouter(api)
