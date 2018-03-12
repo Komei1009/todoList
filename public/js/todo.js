@@ -1,5 +1,3 @@
-//sessionStorage.setItem('mode',0)
-
 // ページ読み込み時に実行したい処理
 $(document).ready( function(){
     var mode = sessionStorage.getItem('mode')
@@ -121,7 +119,6 @@ function display(select){
 
 // 表示選択
 function displaySelect(ele){
-    location.reload("true")
     if (ele.id == "allButton"){
         sessionStorage.setItem('mode',0)
     }else if (ele.id == "activeButton"){
